@@ -1174,7 +1174,7 @@ class Base_GP(object):
 					# fitness_best = fitness # set best fitness score
 					# self.fittest_dict.update({tree_id:self.algo_sym}) # add to dictionary
 			
-		print '\n\033[36m ', len(self.fittest_dict.keys()), 'trees\033[1m', np.sort(self.fittest_dict.keys()), '\033[0;0m\033[36moffer the highest fitness scores.\033[0;0m'
+		print '\n\033[36m ', len(self.fittest_dict.keys()), 'trees\033[1m', np.sort(self.fittest_dict.keys()), '\033[0;0m\033[36moffer the highest fitness scores.\033[1m', fitness_best,'\033[0;0m'  
 		if self.display == 'g': self.fx_karoo_pause(0)
 		
 		return
@@ -1275,7 +1275,7 @@ class Base_GP(object):
 					rule33 = tf.logical_and(rule31, rule32)
 					
 					pairwise_fitness = tf.cast(tf.logical_or(tf.logical_or(rule13, rule23), rule33), tf.int32)
-					
+					fitness = tf.reduce_sum(pairwise_fitness)
 					
 				elif self.kernel == 'r': # REGRESSION kernel
 				
@@ -1285,8 +1285,8 @@ class Base_GP(object):
 					integrating a more sophisticated kernel.
 					'''
 					
-					pairwise_fitness =tf.pow(tf.abs((solution - result)/solution),2)
-					
+					pairwise_fitness =tf.pow(tf.abs(solution - result),2)
+					fitness = tf.reduce_mean(pairwise_fitness)
 					
 				elif self.kernel == 'm': # MATCH kernel
 				
@@ -1297,13 +1297,14 @@ class Base_GP(object):
 					# pairwise_fitness = tf.cast(tf.equal(solution, result), tf.int32) # breaks due to floating points
 					RTOL, ATOL = 1e-05, 1e-08 # fixes above issue by checking if a float value lies within a range of values
 					pairwise_fitness = tf.cast(tf.less_equal(tf.abs(solution - result), ATOL + RTOL * tf.abs(result)), tf.int32)
+					fitness = tf.reduce_sum(pairwise_fitness)
 					
 				# elif self.kernel == '[other]': # [OTHER] kernel
 					# pairwise_fitness = tf.cast(tf.___(solution, result)
 					
 				else: raise Exception('Kernel type is wrong or missing. You entered {}'.format(self.kernel))
 				
-				fitness = tf.reduce_sum(pairwise_fitness)
+				#fitness = tf.reduce_sum(pairwise_fitness)    ## andrew@bytesumo.com moved this into each kernel so they can differ
 				
 				# Process TF graph and collect the results
 				result, pred_labels, solution, fitness, pairwise_fitness = sess.run([result, pred_labels, solution, fitness, pairwise_fitness])
@@ -1657,8 +1658,8 @@ class Base_GP(object):
 				print '\t\033[36m Data row {} predicts value:\033[1m {:.2f} ({:.2f} True)\033[0;0m'.format(i, result['result'][i], result['solution'][i])
 			
 		MSE, fitness = skm.mean_squared_error(result['result'], result['solution']), result['fitness']
-		print '\n\t Regression fitness score: {}'.format(fitness)
-		print '\t Mean Squared Error: {}'.format(MSE)
+		print '\n\tValidation data Regression fitness score: {}'.format(fitness)
+		print '\tValidation data Mean Squared Error: {}'.format(MSE)
 		
 		return
 		
