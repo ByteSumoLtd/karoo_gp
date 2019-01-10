@@ -170,10 +170,10 @@ if len(sys.argv) < 3: # either no command line argument (1) or a filename (2) is
 		while True:
 			try:
 				query = raw_input('\t Enter max number of generations (default 10): ')
-				if query not in str(range(1,101)) or query == '0': raise ValueError()
+				if query not in str(range(1,1001)) or query == '0': raise ValueError()
 				elif query == '': gen_max = 10; break
 				gen_max = int(query); break
-			except ValueError: print '\t\033[32m Enter a number from 1 including 100. Try again ...\n\033[0;0m'
+			except ValueError: print '\t\033[32m Enter a number from 1 including 1000. Try again ...\n\033[0;0m'
 			except KeyboardInterrupt: sys.exit()
 			
 		if gen_max > 1:
