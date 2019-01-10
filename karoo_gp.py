@@ -181,7 +181,7 @@ if len(sys.argv) < 3: # either no command line argument (1) or a filename (2) is
 				try:
 					query = raw_input('\t Display (i)nteractive, (g)eneration, (m)iminal, (s)ilent, or (d)e(b)ug (default m): ')
 					if query not in ['i','g','m','s','db','']: raise ValueError()
-					display = query or 'm'; break
+					display = query or 's'; break  ## andrew@bytesumo.com defaulted this to silent. 
 				except ValueError: print '\t\033[32m Select from the options given. Try again ...\n\033[0;0m'
 				except KeyboardInterrupt: sys.exit()
 				
