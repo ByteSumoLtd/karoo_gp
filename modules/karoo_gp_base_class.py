@@ -1450,21 +1450,6 @@ class Base_GP(object):
 		return
 
 
-	def fx_elitist_tournament(self):
-		if self.display == 'i': print '\n\tFind and reproduce the elite winning individual of the generation ...'
-
-		'''
-		added by andrew@bytesumo.com, a elite tournament, that finds the populations best indivudal for copying over
-		the rest of the tournament continues potentially with this individual. This elitest test is on the currently 
-		defined fitness function. We code this quickly by reusing the exactact tournament selection code in use
-		but we force in this instance the tournament to be the whole population size. 
-		'''
-		# below we call the tournament code, giving the size as the size of the gene_pool. not efficient, but works for the lazy.
-		big_tourn_winner = fx_fitness_tournament(self, len(self.gene_pool))
-		return big_tourn_winner
-
-
-
 	def fx_fitness_tournament(self, tourn_size):
 	
 		'''
@@ -1489,8 +1474,7 @@ class Base_GP(object):
 		
 		if self.display == 'i': print '\n\tEnter the tournament ...'
 		
-		for n in range(tourn_size):
-			n=n+1 # added as I removed the best indivudal from the tournament, as they are elite.
+		for n in range(1, tourn_size):
 			# tree_id = np.random.randint(1, self.tree_pop_max + 1) # former method of selection from the unfiltered population
 			rnd = np.random.randint(len(self.gene_pool)) # select one Tree at random from the gene pool
 			tree_id = int(self.gene_pool[rnd])
@@ -1555,6 +1539,22 @@ class Base_GP(object):
 		
 		return tourn_winner
 		
+
+
+        def fx_elitist_tournament(self, tourn_size):
+                if self.display == 'i': print '\n\tFind and reproduce the elite winning individual of the generation ...'
+
+                '''
+                added by andrew@bytesumo.com, a elite tournament, that finds the populations best indivudal for copying over
+                the rest of the tournament continues potentially with this individual. This elitest test is on the currently 
+                defined fitness function. We code this quickly by reusing the exactact tournament selection code in use
+                but we force in this instance the tournament to be the whole population size. 
+                '''
+                # below we call the tournament code, giving the size as the size of the gene_pool. not efficient, but works for the lazy.
+                big_tourn_winner = self.fx_fitness_tournament(self.tree_pop_max)
+                return big_tourn_winner
+
+
 	
 	def fx_fitness_gene_pool(self):
 	
@@ -1720,13 +1720,13 @@ class Base_GP(object):
 			print '  Perform', self.evolve_repro, 'Reproductions ...'
 			if self.display == 'i': self.fx_karoo_pause(0)
 			
-		for n in (range(self.evolve_repro)-1): # quantity of Trees to be copied without mutation, minus one to account for the elite winner
+		for n in range(1, self.evolve_repro): # quantity of Trees to be copied without mutation, minus one to account for the elite winner
 			tourn_winner = self.fx_fitness_tournament(self.tourn_size) # perform tournament selection for each reproduction
 			tourn_winner = self.fx_evolve_fitness_wipe(tourn_winner) # wipe fitness data
 			self.population_b.append(tourn_winner) # append array to next generation population of Trees
 
 		# added by andrew@bytesumo.com, to carry forward the globally elite individual into the next generation
-		big_tourn_winner = self.fx_elitist_tournament(self)
+		big_tourn_winner = self.fx_elitist_tournament(self.tourn_size)
 		big_tourn_winner = self.fx_evolve_fitness_wipe(big_tourn_winner) # wipe fitness data
 		self.population_b.append(big_tourn_winner) # append array of 1 elite to next generation population of Trees
 		return
