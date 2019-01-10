@@ -1285,7 +1285,7 @@ class Base_GP(object):
 					integrating a more sophisticated kernel.
 					'''
 					
-					pairwise_fitness = tf.abs(solution - result)
+					pairwise_fitness =tf.pow(tf.abs((solution - result)/solution),2)
 					
 					
 				elif self.kernel == 'm': # MATCH kernel
@@ -1637,7 +1637,7 @@ class Base_GP(object):
 		'''
 		
 		for i in range(len(result['result'])):
-                        if i > (len(result['result'])-6):
+                        if i > (len(result['result'])-3):
 				print '\t\033[36m Data row {} predicts value:\033[1m {:.2f} ({:.2f} True)\033[0;0m'.format(i, result['result'][i], result['solution'][i])
 			
 		MSE, fitness = skm.mean_squared_error(result['result'], result['solution']), result['fitness']
