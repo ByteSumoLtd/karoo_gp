@@ -1637,7 +1637,8 @@ class Base_GP(object):
 		'''
 		
 		for i in range(len(result['result'])):
-			print '\t\033[36m Data row {} predicts value:\033[1m {:.2f} ({:.2f} True)\033[0;0m'.format(i, result['result'][i], result['solution'][i])
+                        if i > (len(result['result'])-6):
+				print '\t\033[36m Data row {} predicts value:\033[1m {:.2f} ({:.2f} True)\033[0;0m'.format(i, result['result'][i], result['solution'][i])
 			
 		MSE, fitness = skm.mean_squared_error(result['result'], result['solution']), result['fitness']
 		print '\n\t Regression fitness score: {}'.format(fitness)
