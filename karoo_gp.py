@@ -194,7 +194,7 @@ if len(sys.argv) < 3: # either no command line argument (1) or a filename (2) is
 	evolve_branch = int(0.2 * tree_pop_max) # quantity of a population generated through Branch Mutation
 	evolve_cross = int(0.69 * tree_pop_max) # quantity of a population generated through Crossover
 	filename = '' # not required unless an external file is referenced
-	precision = 6 # number of floating points for the round function in 'fx_fitness_eval'
+	precision = 10 # number of floating points for the round function in 'fx_fitness_eval'
 	swim = 'p' # require (p)artial or (f)ull set of features (operators) for each Tree entering the gene_pool
 	mode = 'd' # pause at the (d)esktop when complete, awaiting further user interaction; or terminate in (s)erver mode
 	
