@@ -269,8 +269,8 @@ class Base_GP(object):
 		elif menu_dict['input_a'] == 'test': # evaluate a Tree against the TEST data
 			expr = str(self.algo_sym) # might change this to algo_raw for more correct expression evaluation
 			result = self.fx_fitness_eval(expr, self.data_test, get_pred_labels = True)
-			print '\n\t\033[36mTree', menu_dict['input_b'], 'yields (raw):', self.algo_raw, '\033[0;0m'
-			print '\t\033[36mTree', menu_dict['input_b'], 'yields (sym):\033[1m', self.algo_sym, '\033[0;0m\n'
+			print '\n\t\033[36mTree', menu_dict['input_b'],' of gen ',self.gen_id, ' yields (raw):', self.algo_raw, '\033[0;0m'
+			print '\t\033[36mTree', menu_dict['input_b'],'of gen',self.gen_id, ' yields (sym):\033[1m', self.algo_sym, '\033[0;0m\n'
 			
 			if self.kernel == 'c': self.fx_fitness_test_classify(result) # TF tested 2017 02/02
 			elif self.kernel == 'r': self.fx_fitness_test_regress(result)
