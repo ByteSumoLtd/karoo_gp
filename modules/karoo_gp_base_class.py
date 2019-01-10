@@ -1725,7 +1725,8 @@ class Base_GP(object):
 			tourn_winner = self.fx_evolve_fitness_wipe(tourn_winner) # wipe fitness data
 			self.population_b.append(tourn_winner) # append array to next generation population of Trees
 
-		big_tourn_winner = self.fx_fitness_tournament(self.tourn_size)
+		# added by andrew@bytesumo.com, to carry forward the globally elite individual into the next generation
+		big_tourn_winner = self.fx_elitist_tournament(self)
 		big_tourn_winner = self.fx_evolve_fitness_wipe(big_tourn_winner) # wipe fitness data
 		self.population_b.append(big_tourn_winner) # append array of 1 elite to next generation population of Trees
 		return
