@@ -195,7 +195,7 @@ class Base_GP(object):
 		while eol == 0:
 			for self.gen_id in range(self.gen_id + 1, self.gen_max + 1): # evolve additional generations of Trees
 				
-				print '\n Evolve a population of Trees for Generation', self.gen_id, '...'
+				print '\n Evolve a population of Trees for Generation', self.gen_id, 'of', self.gen_max, '...'
 				self.population_b = ['Karoo GP by Kai Staats, Evolving Generation'] # initialise population_b to host the next generation
 				
 				self.fx_fitness_gene_pool() # generate the viable gene pool (compares against gp.tree_depth_min)
@@ -205,7 +205,7 @@ class Base_GP(object):
 				self.fx_nextgen_crossover() # method 4 - Crossover
 				self.fx_eval_generation() # evaluate all Trees in a single generation
 				
-				self.population_a = self.fx_evolve_pop_copy(self.population_b, ['Karoo GP by Kai Staats, Generation ' + str(self.gen_id)])
+				self.population_a = self.fx_evolve_pop_copy(self.population_b, ['Karoo GP by Kai Staats, Generation ' + str(self.gen_id) + 'of ' + str(self.gen_max + 1)])
 				
 			if mode == 's': # return the user to the command line when complete
 				self.fx_data_params_write('Server'); eol = 1
