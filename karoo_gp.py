@@ -156,10 +156,10 @@ if len(sys.argv) < 3: # either no command line argument (1) or a filename (2) is
 		while True:
 			try:
 				query = raw_input('\t Enter number of Trees in each population (default 100): ')
-				if query not in str(range(1,1001)) or query == '0': raise ValueError()
+				if query not in str(range(1,10001)) or query == '0': raise ValueError()
 				elif query == '': tree_pop_max = 100; break
 				else: tree_pop_max = int(query); break
-			except ValueError: print '\t\033[32m Enter a number from 1 including 1000. Try again ...\n\033[0;0m'
+			except ValueError: print '\t\033[32m Enter a number from 1 including 10000. Try again ...\n\033[0;0m'
 			except KeyboardInterrupt: sys.exit()
 			
 		# calculate the tournament size
@@ -211,7 +211,7 @@ else: # two or more command line arguments provided
 	ap.add_argument('-bas', action = 'store', dest = 'depth_base', default = 4, help = '[3...10] maximum Tree depth for the initial population')
 	ap.add_argument('-max', action = 'store', dest = 'depth_max', default = 4, help = '[3...10] maximum Tree depth for the entire run')
 	ap.add_argument('-min', action = 'store', dest = 'depth_min', default = 3, help = 'minimum nodes, from 3 to 2^(base_depth +1) - 1')
-	ap.add_argument('-pop', action = 'store', dest = 'pop_max', default = 100, help = '[10...1000] number of trees per generation')
+	ap.add_argument('-pop', action = 'store', dest = 'pop_max', default = 100, help = '[10...10000] number of trees per generation')
 	ap.add_argument('-gen', action = 'store', dest = 'gen_max', default = 10, help = '[1...100] number of generations')
 	ap.add_argument('-tor', action = 'store', dest = 'tor_size', default = 7, help = '[7 for each 100] recommended tournament size')
 	ap.add_argument('-evr', action = 'store', dest = 'evo_r', default = 0.1, help = '[0.0-1.0] decimal percent of pop generated through Reproduction')

@@ -267,7 +267,8 @@ class Base_GP(object):
 		if menu_dict['input_a'] == 'esc': return 0 # ENTER enables next step in generational, interactive, and debug display
 		
 		elif menu_dict['input_a'] == 'test': # evaluate a Tree against the TEST data
-			expr = str(self.algo_sym) # might change this to algo_raw for more correct expression evaluation
+			expr = str(self.algo_raw) # might change this to algo_raw for more correct expression evaluation
+			#andrew@bytesumo.com swapped the above to raw. 	
 			result = self.fx_fitness_eval(expr, self.data_test, get_pred_labels = True)
 			print '\n\t\033[36mTree', menu_dict['input_b'],' of gen ',self.gen_id, ' yields (raw):', self.algo_raw, '\033[0;0m'
 			print '\t\033[36mTree', menu_dict['input_b'],'of gen',self.gen_id, ' yields (sym):\033[1m', self.algo_sym, '\033[0;0m\n'
@@ -602,6 +603,7 @@ class Base_GP(object):
 			
 			file.write('\n\n Tree ' + str(fittest_tree) + ' is the most fit, with expression:')
 			file.write('\n\n ' + str(self.algo_sym))
+                        file.write('\n\n ' + str(self.algo_raw))
 			
 			if self.kernel == 'c':
 				file.write('\n\n Classification fitness score: {}'.format(result['fitness']))
@@ -1136,7 +1138,8 @@ class Base_GP(object):
 		
 			### PART 1 - GENERATE MULTIVARIATE EXPRESSION FOR EACH TREE ###
 			self.fx_eval_poly(population[tree_id]) # extract the expression
-			if self.display not in ('s'): print '\t\033[36mTree', population[tree_id][0][1], 'yields (sym):\033[1m', self.algo_sym, '\033[0;0m'
+													## andrew@bytesumo.com:         below     I wrapped it in str
+			if self.display not in ('s'): print '\t\033[36mTree', population[tree_id][0][1], 'yields (sym):\033[1m', str(self.algo_sym), '\033[0;0m'
 			
 			
 			### PART 2 - EVALUATE FITNESS FOR EACH TREE AGAINST TRAINING DATA ###
@@ -1297,6 +1300,7 @@ class Base_GP(object):
 					# pairwise_fitness = tf.cast(tf.equal(solution, result), tf.int32) # breaks due to floating points
 					RTOL, ATOL = 1e-05, 1e-08 # fixes above issue by checking if a float value lies within a range of values
 					pairwise_fitness = tf.cast(tf.less_equal(tf.abs(solution - result), ATOL + RTOL * tf.abs(result)), tf.int32)
+					
 					fitness = tf.reduce_sum(pairwise_fitness)
 					
 				# elif self.kernel == '[other]': # [OTHER] kernel
@@ -1653,9 +1657,9 @@ class Base_GP(object):
 
 		'''
 		
-		for i in range(len(result['result'])):
-                        if i > (len(result['result'])-3):
-				print '\t\033[36m Data row {} predicts value:\033[1m {:.2f} ({:.2f} True)\033[0;0m'.format(i, result['result'][i], result['solution'][i])
+		#for i in range(len(result['result'])):
+                        #if i > (len(result['result'])-3): ### andrew@bytesumo capped the print out to just 2 records
+			#	print '\t\033[36m Data row {} predicts value:\033[1m {:.2f} ({:.2f} True)\033[0;0m'.format(i, result['result'][i], result['solution'][i])
 			
 		MSE, fitness = skm.mean_squared_error(result['result'], result['solution']), result['fitness']
 		print '\n\tValidation data Regression fitness score: {}'.format(fitness)
