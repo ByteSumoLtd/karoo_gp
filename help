@@ -1,0 +1,23 @@
+        -ker [r,c,m]                                                                    fitness function: (r)egression, (c)lassification, or (m)atching
+        -typ [f,g,r]                                                                    Tree type: (f)ull, (g)row, or (r)amped half/half
+        -bas [3...10]                                                                   maximum Tree depth for initial population
+        -max [3...10]                                                                   maximum Tree depth for entire run
+        -min [3 to 2^(bas +1) - 1]              minimum number of nodes
+        -pop [10...1000]                                                        number of trees in each generational population
+        -gen [1...100]                                                          number of generations
+        -tor [7 per 100]                                                        number of trees selected for tournament
+        -evr [0.0...1.0]                                                decimal percent of pop generated through Reproduction
+        -evp [0.0...1.0]                                                decimal percent of pop generated through Point Mutation
+        -evb [0.0...1.0]                                                decimal percent of pop generated through Branch Mutation
+        -evc [0.0...1.0]                                                decimal percent of pop generated through Crossover
+
+
+
+        ap.add_argument('-evr', action = 'store', dest = 'evo_r', default = 0.1, help = '[0.0-1.0] decimal percent of pop generated through Reproduction')
+        ap.add_argument('-evp', action = 'store', dest = 'evo_p', default = 0.0, help = '[0.0-1.0] decimal percent of pop generated through Point Mutation')
+        ap.add_argument('-evb', action = 'store', dest = 'evo_b', default = 0.2, help = '[0.0-1.0] decimal percent of pop generated through Branch Mutation')
+        ap.add_argument('-evc', action = 'store', dest = 'evo_c', default = 0.7, help = '[0.0-1.0] decimal percent of pop generated through Crossover')
+        ap.add_argument('-fil', action = 'store', dest = 'filename', default = '', help = '/path/to_your/[data].csv')
+
+
+
