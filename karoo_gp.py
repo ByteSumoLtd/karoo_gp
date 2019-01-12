@@ -247,6 +247,30 @@ else: # two or more command line arguments provided
 #   Conduct the GP run                    |
 #++++++++++++++++++++++++++++++++++++++++++
 
+### I propose changing the way that this function is called called.
+
+### The calls will be done to kickoff many parallel runs - to simulate many Islands evolving separately
+### the population files for all islands will all reside in a single directory, prefixed with the island identfier.
+
+### On each island, the Elite found via populationwide tournament (implemented now) will be written to a "jetsetter" group, called population_j_<IslandID>_.txt
+### on evolution, members of population_j will be read in using a file glob, and be shuffled, and one selected to join the island's next generation.
+### this jetsetter tournament ensures all islands have a stable population, even they can evolve at different rates of speed. 
+### Slow islands will drop off jetsetters late... but it doesn't matter as long as population_j is randomly initialised on startup with a random initial 
+### jetsetter, done possibly before the islands are even activated. This ensures integrity even if timing is a bit off which can happen.
+
+### The effect will be parallel decoupled jetsetter tournament, sharing best genetic material across N independently evolving islands.
+
+### Note, on request for jetsetter, present jetsetters are collected and shuffled and one chosen - no waiting for all to be there, or all to be latest gen.
+### On parallel runnning, I notice my CPUs (12 cores) hardly get used - so a island per thread sounds good. Also my GPU barely notices karoo is running, so 
+### a island per thread is unlikely to make a difference. Each island has a full copy of the test/train file. All statistics need to be collected for each island, and
+### across all islands. 
+
+### on completion of a island's generation loop, a final best fitness jetsetter is found, and pushed to a Hall of Fame where the validation file is used to 
+### establish the final fitness of the equation.
+
+### to accomplish all this, I just I will submit a commandline job via the OS for each island, passing the directory details and island id's to use.
+
+
 gp.fx_karoo_gp(kernel, tree_type, tree_depth_base, tree_depth_max, tree_depth_min, tree_pop_max, gen_max, tourn_size, filename, evolve_repro, evolve_point, evolve_branch, evolve_cross, display, precision, swim, mode)
 
 print '\n\033[3m "It is not the strongest of the species that survive, nor the most intelligent,\033[0;0m'
