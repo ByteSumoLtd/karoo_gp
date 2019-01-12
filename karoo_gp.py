@@ -247,35 +247,57 @@ else: # two or more command line arguments provided
 #   Conduct the GP run                    |
 #++++++++++++++++++++++++++++++++++++++++++
 
-### I propose changing the way that this function is called called.
+### I propose changing the way that this function is called to implement running evolution in Islands, where Elites jetset between islands.
+### this should parallelise the code and improve learning rates too. (I hope)
+
+### How:
 
 ### The calls will be done to kickoff many parallel runs - to simulate many Islands evolving separately
-### the population files for all islands will all reside in a single directory, prefixed with the island identfier.
+### the population files for all islands will all reside in a single directory, and all current files to be suffixed with the island's identfier.
 
-### On each island, the Elite found via populationwide tournament (implemented now) will be written to a "jetsetter" group, called population_j_<IslandID>_.txt
-### on evolution, members of population_j will be read in using a file glob, and be shuffled, and one selected to join the island's next generation.
-### this jetsetter tournament ensures all islands have a stable population, even they can evolve at different rates of speed. 
-### Slow islands will drop off jetsetters late... but it doesn't matter as long as population_j is randomly initialised on startup with a random initial 
-### jetsetter, done possibly before the islands are even activated. This ensures integrity even if timing is a bit off which can happen.
+### On each island, the Elite found via populationwide tournament (Elite implemented now) will be written to a "jetsetter" group, called population_j_<IslandID>_.txt
+### on evolution, members of population_j will be read in using a file glob, be shuffled, and one randomly selected to join this island's next generation.
+### this jetsetter tournament ensures all islands have a stable population size, and they can even evolve at different rates of speed... 
+### i.e. a slow island may drop off jetsetters late... but it doesn't matter as long as population_j is randomly initialised on startup with a random initial 
+### jetsetter, done possibly before the islands are even activated if and only if the needed population_j file is missing.
+### This initialisation, and flexible selection, ensures integrity of migration even if the timing is a bit hotspotty in parallelisation, which can happen.
 
-### The effect will be parallel decoupled jetsetter tournament, sharing best genetic material across N independently evolving islands.
+### The effect will be parallel decoupled jetsetter tournament, sharing best genetic material across N independently evolving islands. PopJ becomes a waiting room.
+### last minute flights assigned randomly. Option to have X number of jetsetters per island sent/received.
 
-### Note, on request for jetsetter, present jetsetters are collected and shuffled and one chosen - no waiting for all to be there, or all to be latest gen.
+### Note, on request for jetsetter, all jetsetters in the "waiting room" are collected and shuffled and one chosen - no waiting for all to be there, or all to be latest gen.
 ### On parallel runnning, I notice my CPUs (12 cores) hardly get used - so a island per thread sounds good. Also my GPU barely notices karoo is running, so 
-### a island per thread is unlikely to make a difference. Each island has a full copy of the test/train file. All statistics need to be collected for each island, and
-### across all islands. 
+### a island per thread is unlikely to hammer the machine. 
+### Only ram on GPU card is be to watched for large file inputs, or very very large populations with big depth. 
+### Note Each island has a full copy of the test/train file. All statistics need to be collected for each island, and centrally collected
+### across all islands in a global log ideally.
 
-### on completion of a island's generation loop, a final best fitness jetsetter is found, and pushed to a Hall of Fame where the validation file is used to 
-### establish the final fitness of the equation.
+### on completion of a island's full run, a final best indivudal winner is found and pushed to a Hall of Fame, with test/train validation metrics, 
+### Then we rite it out to a hall of fame HOF file. When written all indivuals in the HOF can be compared to see the very
+### very best indivual discovered across all islands (note it could be that many tie in this race - so a list of the best produced)
 
-### to accomplish all this, I just I will submit a commandline job via the OS for each island, passing the directory details and island id's to use.
+### to accomplish all this logic with the least amount of work, I will try and submit a commandline job via the OS for each island instantiated,
+###  passing the directory details and island id's to use.
 
+### lastly - nice to have -- if I point a new run at an old directory, ideally the jetsetters aren't overwritten...
+### it means island genetics are jumpstarted with the best genes of the old run, offering a way to kickstart evolution and continue
+### the learning cycle from an advanced stage ... which while not perfect, may be just good enough to work in practice for now to effect a "continue" option.
 
 gp.fx_karoo_gp(kernel, tree_type, tree_depth_base, tree_depth_max, tree_depth_min, tree_pop_max, gen_max, tourn_size, filename, evolve_repro, evolve_point, evolve_branch, evolve_cross, display, precision, swim, mode)
 
+# parameters to add: islandID, common run directory
+# then karoo can decide right here if this code is being run as a child - island - or as the launcher ... if a launcher, iterate through islandIDs kicking off the jobs.
+### be sure to allow an island count of 1, to be able to do comparisons of performance (quality of prediction/evolution, compute wall times)
+# if an launcher - launch a commandline run of children processes, with the needed new aurguments, via a loop, to kickstart islands running...
+
+
+# conditionally print this if not an island run
 print '\n\033[3m "It is not the strongest of the species that survive, nor the most intelligent,\033[0;0m'
 print '\033[3m  but the one most responsive to change."\033[0;0m --Charles Darwin\n'
 print '\033[3m Congrats!\033[0;0m Your Karoo GP run is complete.\n'
+
+# conditionally print a kicked off island print statement with details of island.
+
 sys.exit()
 
 
