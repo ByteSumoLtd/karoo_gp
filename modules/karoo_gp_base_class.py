@@ -36,34 +36,34 @@ import tensorflow as tf
 import ast
 import operator as op
 
-operators = {ast.Add: tf.add, # e.g., a + b
-	ast.Sub: tf.subtract, # e.g., a - b
-	ast.Mult: tf.multiply, # e.g., a * b
-	ast.Div: tf.divide, # e.g., a / b
-	ast.Pow: tf.pow, # e.g., a ** 2
-	ast.USub: tf.negative, # e.g., -a
-	ast.And: tf.logical_and, # e.g., a and b
-	ast.Or: tf.logical_or, # e.g., a or b
-	ast.Not: tf.logical_not, # e.g., not a
-	ast.Eq: tf.equal, # e.g., a == b
-	ast.NotEq: tf.not_equal, # e.g., a != b
-	ast.Lt: tf.less, # e.g., a < b
-	ast.LtE: tf.less_equal, # e.g., a <= b
-	ast.Gt: tf.greater, # e.g., a > b
-	ast.GtE: tf.greater_equal, # e.g., a >= 1
-	'abs': tf.abs, # e.g., abs(a)
-	'sign': tf.sign, # e.g., sign(a)
-	'square': tf.square, # e.g., square(a)
-	'sqrt': tf.sqrt, # e.g., sqrt(a)
-	'pow': tf.pow, # e.g., pow(a, b)
-	'log': tf.log, # e.g., log(a)
-	'log1p': tf.log1p, # e.g., log1p(a)
-	'cos': tf.cos, # e.g., cos(a)
-	'sin': tf.sin, # e.g., sin(a)
-	'tan': tf.tan, # e.g., tan(a)
-	'acos': tf.acos, # e.g., acos(a)
-	'asin': tf.asin, # e.g., asin(a)
-	'atan': tf.atan, # e.g., atan(a)
+operators = {ast.Add: tf.add, 		# e.g., a + b
+	ast.Sub: tf.subtract, 		# e.g., a - b
+	ast.Mult: tf.multiply, 		# e.g., a * b
+	ast.Div: tf.divide, 		# e.g., a / b
+	ast.Pow: tf.pow, 		# e.g., a ** 2
+	ast.USub: tf.negative, 		# e.g., -a
+	ast.And: tf.logical_and, 	# e.g., a and b
+	ast.Or: tf.logical_or, 		# e.g., a or b
+	ast.Not: tf.logical_not, 	# e.g., not a
+	ast.Eq: tf.equal, 		# e.g., a == b
+	ast.NotEq: tf.not_equal, 	# e.g., a != b
+	ast.Lt: tf.less,		# e.g., a < b
+	ast.LtE: tf.less_equal, 	# e.g., a <= b
+	ast.Gt: tf.greater, 		# e.g., a > b
+	ast.GtE: tf.greater_equal, 	# e.g., a >= 1
+	'abs': tf.abs, 			# e.g., abs(a)
+	'sign': tf.sign, 		# e.g., sign(a)
+	'square': tf.square, 		# e.g., square(a)
+	'sqrt': tf.sqrt, 		# e.g., sqrt(a)
+	'pow': tf.pow, 			# e.g., pow(a, b)
+	'log': tf.log, 			# e.g., log(a)
+	'log1p': tf.log1p, 		# e.g., log1p(a)
+	'cos': tf.cos, 			# e.g., cos(a)
+	'sin': tf.sin, 			# e.g., sin(a)
+	'tan': tf.tan, 			# e.g., tan(a)
+	'acos': tf.acos, 		# e.g., acos(a)
+	'asin': tf.asin, 		# e.g., asin(a)
+	'atan': tf.atan, 		# e.g., atan(a)
 	}
 
 np.set_printoptions(linewidth = 320) # set the terminal to print 320 characters before line-wrapping in order to view Trees
@@ -77,10 +77,10 @@ class Base_GP(object):
 	expections, such as 'fx_fitness_gene_pool'.
 	
 	The method categories (denoted by +++ banners +++) are as follows:
-		fx_karoo_						Methods to Run Karoo GP
-		fx_data_						Methods to Load and Archive Data
-		fx_init_						Methods to Construct the 1st Generation
-		fx_eval_						Methods to Evaluate a Tree
+		fx_karoo_					Methods to Run Karoo GP
+		fx_data_					Methods to Load and Archive Data
+		fx_init_					Methods to Construct the 1st Generation
+		fx_eval_					Methods to Evaluate a Tree
 		fx_fitness_					Methods to Train and Test a Tree for Fitness
 		fx_nextgen_					Methods to Construct the next Generation
 		fx_evolve_					Methods to Evolve a Population
@@ -90,37 +90,41 @@ class Base_GP(object):
 	'''
 		
 	def __init__(self):
-				
+		####### jetsetter - I will need to review this and adjust global and local vars for Elites jetsetting over Islands approach.
+		#######			population_j will need managing
+		#######			global run directory needs adjustment - can be arg on command line
 		'''
 		### Global variables used for data management ###
-		self.data_train					store train data for processing in TF
-		self.data_test					store test data for processing in TF
-		self.tf_device					set TF computation backend device (CPU or GPU)
-		self.tf_device_log			employed for TensorFlow debugging
+		self.data_train			store train data for processing in TF
+		self.data_test			store test data for processing in TF
+		self.tf_device			set TF computation backend device (CPU or GPU)
+		self.tf_device_log		employed for TensorFlow debugging
 	
 		self.data_train_cols		number of cols in the TRAINING data (see fx_data_load, below)
 		self.data_train_rows		number of rows in the TRAINING data (see fx_data_load, below)
-		self.data_test_cols			number of cols in the TEST data (see fx_data_load, below)
-		self.data_test_rows			number of rows in the TEST data (see fx_data_load, below)
+		self.data_test_cols		number of cols in the TEST data (see fx_data_load, below)
+		self.data_test_rows		number of rows in the TEST data (see fx_data_load, below)
 	
-		self.functions					user defined functions (operators) from the associated files/[functions].csv
-		self.terminals					user defined variables (operands) from the top row of the associated [data].csv
-		self.coeff							user defined coefficients (NOT YET IN USE)
-		self.fitness_type				fitness type
-		self.datetime						date-time stamp of when the unique directory is created
-		self.path								full path to the unique directory created with each run
-		self.dataset						local path and dataset filename
+		self.functions			user defined functions (operators) from the associated files/[functions].csv
+		self.terminals			user defined variables (operands) from the top row of the associated [data].csv
+		self.coeff			user defined coefficients (NOT YET IN USE)
+		self.fitness_type		fitness type
+		self.datetime			date-time stamp of when the unique directory is created
+		self.path			pull path to the unique directory created with each run
+		self.dataset			local path and dataset filename
 		
 		### Global variables used for evolutionary management ###
-		self.population_a				the root generation from which Trees are chosen for mutation and reproduction
-		self.population_b				the generation constructed from gp.population_a (recyled)
-		self.gene_pool					once-per-generation assessment of trees that meet min and max boundary conditions
+		self.population_a		the root generation from which Trees are chosen for mutation and reproduction
+		self.population_b		the generation constructed from gp.population_a (recyled)
+		self.gene_pool			once-per-generation assessment of trees that meet min and max boundary conditions
 		self.gen_id			simple n + 1 increment
-		self.fitness_type				set in 'fx_data_load' as either a minimising or maximising function
-		self.tree								axis-1, 13 element Numpy array that defines each Tree, stored in 'gp.population'
-		self.pop_*							13 variables that define each Tree (see 'fx_init_tree_initialise')
+		self.fitness_type		set in 'fx_data_load' as either a minimising or maximising function
+		self.tree			axis-1, 13 element Numpy array that defines each Tree, stored in 'gp.population'
+		self.pop_*			13 variables that define each Tree (see 'fx_init_tree_initialise')
 		'''
-		
+		##### jetsetter - I also may need to have more vars here - to manage islands and population_j, and population j specific gene_pool
+		##### question 	  what happens for example, if different islands have different fitness functions for evolution?
+
 		self.algo_raw = [] # the raw expression generated by Sympy per Tree -- CONSIDER MAKING THIS VARIABLE LOCAL
 		self.algo_sym = [] # the expression generated by Sympy per Tree -- CONSIDER MAKING THIS VARIABLE LOCAL
 		self.fittest_dict = {} # all Trees which share the best fitness score
@@ -405,6 +409,12 @@ class Base_GP(object):
 		self.tf_device_log = False # TF device usage logging (for debugging)
 		
 		### 4) create a unique directory and initialise all .csv files ###
+		
+		####### jetsetter - I need to make the following call to get the os.getpid() identifier and add it as a suffix to the file names. <date>/<name>.<pid>.csv
+		#######             Also - the datetime should be conditional from commandline argument, to override the below (as set from launcher)
+		#######			   this implies the unique directory datetime is available later, and that it can be retrieved when needed. needs a name?
+		#######		    Also - add in a population_j.csv to hold the jetsetter Elite indivdual record.
+
 		self.datetime = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 		self.path = os.path.join(cwd, 'runs/', filename.split('.')[0] + '_' + self.datetime + '/') # generate a unique directory name
 		if not os.path.isdir(self.path): os.makedirs(self.path) # make a unique directory
@@ -428,6 +438,9 @@ class Base_GP(object):
 	
 	def fx_data_recover(self, population):
 	
+		####### jetsetter - is this the code needed to read in shared jetsetter population? Could be. This function not organised to do it
+		#######             but I can lift the reader parts out and create that from here I think.
+
 		'''
 		This method is used to load a saved population of Trees, as invoked through the (pause) menu where population_r 
 		replaces population_a in the karoo_gp/runs/[date-time]/ directory.
@@ -487,6 +500,7 @@ class Base_GP(object):
 		
 	
 	def fx_data_tree_append(self, tree):
+		####### jetsetter - this method will be needed to append jetting Elite trees to the current population once they are read in and selected.
 	
 		'''
 		Append Tree array to the foundation Population.
@@ -503,7 +517,7 @@ class Base_GP(object):
 		
 	
 	def fx_data_tree_write(self, population, key):
-	
+		####### jetsetter - I'll need this to write out the Elite tree to the population_j jetsetter file.
 		'''
 		Save population_* to disk.
 		
@@ -526,7 +540,7 @@ class Base_GP(object):
 		
 	
 	def fx_data_params_write(self, app): # tested 2017 02/13
-	
+		####### jetsetter - need to find what calls this - and split it - to write header on launch, to better monitor long running evolutions.
 		'''
 		Save run-time configuration parameters to disk.
 		
@@ -634,7 +648,8 @@ class Base_GP(object):
 	#+++++++++++++++++++++++++++++++++++++++++++++
 	
 	def fx_init_construct(self, tree_type, tree_depth_base):
-		
+		####### jetsetter - adjust to import pop_j data first, pulling in *all* available elites from all old islands, and then initialise the remainder, as is.
+		#######             this simple thing will bootstrap all new islands on a hard restart with the best of the last epoch globally, helping jumpstart evolution.
 		'''
 		This method constructs the initial population of Tree type 'tree_type' and of the size tree_depth_base. The Tree
 		can be Full, Grow, or "Ramped Half/Half" as defined by John Koza.
